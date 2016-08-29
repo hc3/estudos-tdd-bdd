@@ -1,0 +1,42 @@
+{
+  "name": "estudos-tdd-bdd",
+  "version": "0.0.1",
+  "description": "um sistema para treinar tdd e bdd com gulp e outras ferramentas automatizadas",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "babel-node index.js",
+    "test-integration": "mocha --opts test/integration/mocha.opts test/integration/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hc3/estudos-tdd-bdd.git"
+  },
+  "keywords": [
+    "mean",
+    "bemean",
+    "webschool",
+    "hc3",
+    "gulp",
+    "tdd",
+    "bdd"
+  ],
+  "author": "hc3",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hc3/estudos-tdd-bdd/issues"
+  },
+  "homepage": "https://github.com/hc3/estudos-tdd-bdd#readme",
+  "devDependencies": {
+    "babel-cli": "^6.14.0",
+    "babel-preset-es2015": "^6.14.0",
+    "chai": "^3.5.0",
+    "mocha": "^3.0.2",
+    "supertest": "^2.0.0"
+  },
+  "dependencies": {
+    "express": "^4.14.0",
+    "sequelize": "^3.24.1",
+    "sqlite3": "^3.1.4"
+  }
+}
