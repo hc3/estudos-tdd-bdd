@@ -68,8 +68,8 @@ describe('Routes books', () => {
         .get('/books')
         .end((err, res) => {
 
-          expect(res.body[0].name).to.be.equal(defaultBook.name);
-          expect(res.body[0].id).to.be.equal(defaultBook.id);
+          expect(res.body[0].name).to.be.eql(defaultBook.name);
+          expect(res.body[0].id).to.be.eql(defaultBook.id);
 
           done(err);
         });
@@ -309,8 +309,8 @@ describe('Routes books', () => {
         .get('/books')
         .end((err, res) => {
 
-          expect(res.body[0].name).to.be.equal(defaultBook.name);
-          expect(res.body[0].id).to.be.equal(defaultBook.id);
+          expect(res.body[0].name).to.be.eql(defaultBook.name);
+          expect(res.body[0].id).to.be.eql(defaultBook.id);
 
           done(err);
         });
@@ -321,3 +321,310 @@ describe('Routes books', () => {
 ````
 
 ## Aula 05
+
+Na aula 04 colocamos o teste para funcionar com os dados integrados com o banco (sqlite) e nessa aula vamos fazer os testes para as outras operações do CRUD.
+Quando usamos testes podemos simplemente começar a implementar pelo teste por exemplo vamos agora implementar uma rota para buscar 1 livro, como devemos fazer? simples criamos o teste rodamos vemos o teste quebrar e então implementamos o código que vai fazer o teste passar vamos ao código:
+
+<b>teste para buscar um book</b>
+no arquivo /test/integration/app.js adicionamos a seguinte linha e com isso já temos o teste, vamos rodar o teste e ver ele quebrar:
+<b>npm run test-integration</b>
+````js
+describe('Route GET /books/{id}', () => {
+  it('should return a books', done => {
+    request
+      .get('/books/1')
+      .end((err, res) => {
+
+        expect(res.body.name).to.be.eql(defaultBook.name);
+        expect(res.body.id).to.be.eql(defaultBook.id);
+
+        done(err);
+      });
+  });
+});
+````
+podemos ver que o teste quebrou porque falta implementar o comportamento, vamos a ele no <b>app.js</b> (express)
+````js
+app.route('/books/:id')
+  .get((req,res) => {
+    Books.findOne({where: req.params})
+      .then(result => {res.json(result)})
+      .catch(err => {res.status(412)})
+  });
+````
+agora podemos rodar o teste novamente e ver que tudo passou ;D , vamos perceber aqui que não foi preciso abrir o browser para garantir que o comportamento está funcionando corretamente e com isso já começamos a ver como os testes podem nos ajudar no dia-a-dia, vamos a outras operações do crud.
+** IMPORTANTE ANTES DE IMPLEMENTAR OS TESTES VAMOS INSTALAR O MODULO DE BODY-PARSER PARA PARSEAR OS DADOS PARA JSON **
+npm install body-parser --save
+agora vamos no express e configurar e BODY-PARSER adicionando as seguintes linhas de código:
+````js
+...
+import bodyParser from 'body-parser';
+...
+app.use(bodyParser.json());
+...
+````
+
+
+#### CREATE
+<b>TESTE</b>
+````js
+describe('Route POST /books', () => {
+  it('should create a new book', done => {
+    const newBook = {
+      id:2,
+      name:'newBook'
+    };
+    request
+      .post('/books')
+      .send(newBook)
+      .end((err, res) => {
+
+        expect(res.body.id).to.be.eql(newBook.id);
+        expect(res.body.name).to.be.eql(newBook.name);
+
+        done(err);
+      });
+  });
+});
+````
+
+<b>APP</b>
+````js
+app.route('/books')
+  .get((req,res) => {
+    Books.findAll({})
+      .then(result => {res.json(result)})
+      .catch(err => {res.status(412)})
+  })
+  .post((req,res) => {
+    Books.create(req.body)
+      .then(result => res.json(result))
+      .catch(err => res.status(412))
+  });
+````
+
+#### UPDATE
+<b>TESTE</b>
+````js
+describe('Route PUT /books/{id}', () => {
+  it('should update a book', done => {
+    const updatedBook = {
+      id:1,
+      name:'Updated Book'
+    };
+    request
+      .put('/books/1')
+      .send(updatedBook)
+      .end((err, res) => {
+
+        expect(res.body).to.be.eql([1]);
+
+        done(err);
+      });
+  });
+});
+````
+
+<b>APP</b>
+````js
+app.route('/books/:id')
+  .get((req,res) => {
+    Books.findOne({where: req.params})
+      .then(result => {res.json(result)})
+      .catch(err => {res.status(412)})
+  })
+  .put((req,res) => {
+    Books.update(req.body,{where: req.params})
+      .then(result => {res.json(result)})
+      .catch(err => {res.status(412)})
+  });
+````
+
+#### REMOVE
+<b>TESTE</b>
+````js
+describe('Route DELETE /books/{id}', () => {
+  it('should delete a book', done => {
+    request
+      .delete('/books/1')
+      .end((err, res) => {
+
+        expect(res.statusCode).to.be.eql(204);
+
+        done(err);
+      });
+  });
+});
+````
+
+<b>APP</b>
+````js
+app.route('/books/:id')
+  .get((req,res) => {
+    Books.findOne({where: req.params})
+      .then(result => {res.json(result)})
+      .catch(err => {res.status(412)})
+  })
+  .put((req,res) => {
+    Books.update(req.body,{where: req.params})
+      .then(result => {res.json(result)})
+      .catch(err => {res.status(412)})
+  })
+  .delete((req,res) => {
+    Books.destroy({where: req.params})
+      .then(result => {res.sendStatus(204)})
+      .catch(err => {res.status(412)})
+  });
+````
+
+finalizamos o CRUD e já está tudo funcionando, aqui já podemos ver que nem abrimos o browser sequer rodamos a aplicação e já temos a certeza de que está tudo funcionando os testes são maravilhosos gente, segue os arquivos completos do teste e do express:
+
+<b>TESTEAS /test/integration/app.js</b>
+````js
+describe('Routes books', () => {
+  // busca o model de Books
+  const Books = app.datasource.models.Books,
+  defaultBook = {
+    id:1,
+    name:'Default Book'
+  };
+  // deixa explicito para o framework de testes que antes de rodar os testes ele deve
+  // realizar os passos abaixo.
+  beforeEach(done => {
+    Books
+      // como o model é criado pelo sequelize o destroy faz parte do sequelize (vide documentação)
+      .destroy({where:{}})
+      .then(() => Books.create(defaultBook))
+      .then(() => {
+        done();
+      });
+  });
+
+  describe('Route GET /books', () => {
+    it('should return a list of books', done => {
+      request
+        .get('/books')
+        .end((err, res) => {
+
+          expect(res.body[0].id).to.be.eql(defaultBook.id);
+          expect(res.body[0].name).to.be.eql(defaultBook.name);
+
+          done(err);
+        });
+    });
+  });
+
+  describe('Route GET /books/{id}', () => {
+    it('should return a books', done => {
+      request
+        .get('/books/1')
+        .end((err, res) => {
+
+          expect(res.body.id).to.be.eql(defaultBook.id);
+          expect(res.body.name).to.be.eql(defaultBook.name);
+
+          done(err);
+        });
+    });
+  });
+
+  describe('Route POST /books', () => {
+    it('should create a new book', done => {
+      const newBook = {
+        id:2,
+        name:'newBook'
+      };
+      request
+        .post('/books')
+        .send(newBook)
+        .end((err, res) => {
+
+          expect(res.body.id).to.be.eql(newBook.id);
+          expect(res.body.name).to.be.eql(newBook.name);
+
+          done(err);
+        });
+    });
+  });
+
+  describe('Route PUT /books/{id}', () => {
+    it('should update a book', done => {
+      const updatedBook = {
+        id:1,
+        name:'Updated Book'
+      };
+      request
+        .put('/books/1')
+        .send(updatedBook)
+        .end((err, res) => {
+
+          expect(res.body).to.be.eql([1]);
+
+          done(err);
+        });
+    });
+  });
+
+  describe('Route DELETE /books/{id}', () => {
+    it('should delete a book', done => {
+      request
+        .delete('/books/1')
+        .end((err, res) => {
+
+          expect(res.statusCode).to.be.eql(204);
+
+          done(err);
+        });
+    });
+  });
+
+});
+````
+
+<b>EXPRESS app.js</b>
+````js
+import express from 'express';
+import config from './config/config';
+import datasource from './config/datasource';
+import bodyParser from 'body-parser';
+
+const app = express();
+app.config = config;
+app.datasource = datasource(app);
+app.set('port',7000);
+app.use(bodyParser.json());
+const Books = app.datasource.models.Books;
+
+app.route('/books')
+  .get((req,res) => {
+    Books.findAll({})
+      .then(result => {res.json(result)})
+      .catch(err => {res.status(412)})
+  })
+  .post((req,res) => {
+    Books.create(req.body)
+      .then(result => res.json(result))
+      .catch(err => res.status(412))
+  });
+
+app.route('/books/:id')
+  .get((req,res) => {
+    Books.findOne({where: req.params})
+      .then(result => {res.json(result)})
+      .catch(err => {res.status(412)})
+  })
+  .put((req,res) => {
+    Books.update(req.body,{where: req.params})
+      .then(result => {res.json(result)})
+      .catch(err => {res.status(412)})
+  })
+  .delete((req,res) => {
+    Books.destroy({where: req.params})
+      .then(result => {res.sendStatus(204)})
+      .catch(err => {res.status(412)})
+  });
+
+export default app;
+````
+
+## Aula 06
