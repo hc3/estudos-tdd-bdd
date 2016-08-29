@@ -119,3 +119,9 @@ export default app;
 e com isso já podemos rodar os teste com o comando:<b>npm run test-integration</b>
 
 ## Aula 03 (sequelize e sqlite)
+
+
+## Aula 04
+
+
+## Aula 05
