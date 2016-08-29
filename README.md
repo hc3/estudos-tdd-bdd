@@ -1,4 +1,4 @@
-# estudos-tdd-bdd
+# Estudo sobre Testes com MEAN
 um resumo dos estudos sobre TDD e BDD com MEAN
 
 ## Aula 01 ( babel + express)
@@ -101,7 +101,7 @@ global.expect = chai.expect;
 o arquivo <b>mocha.opts</b> faz as configuraçoes do mocha o arquivo <b>helpers.js</b> importar os modulos do supertest do chai e importa app e passa para variáveis globais que serão usadas em <b>app.js</b> sendo elas expect que cria o teste usando o expect do chai ( vide documentação ) e o request que é uma requisiçã simulada para nosso ap e o request que é uma requisiçã simulada para nosso app, nesse primeiro capitulo configuramos app.js da nossa aplicação da seguinte maneira:
 
 <b>app.js</b> (express)
-````
+````js
 import express from 'express';
 
 const app = express();
