@@ -179,5 +179,145 @@ Aula finalizada, o que temos de interessante nessa aula são os arquivos config.
 
 ## Aula 04
 
+na Aula 03 criamos o arquivos Books.js então agora vamos ao código dele.
+<b>Books.js</b>
+````js
+export default (sequelize,DataType) => {
+  const Books = sequelize.define('Books',{
+    id:{
+      type:DataType.INTEGER,
+      primaryKey:true,
+      autoIncrement:true
+    },
+    name:{
+      type:DataType.STRING,
+      allowNull:false,
+      validade:{
+        notEmpty:true
+      }
+    }
+  });
+  return Books;
+}
+````
+
+feito o model agora temos que importar o model sempre que iniciar o banco vamos para <b>datasource.js</b>
+````js
+import Sequelize from 'sequelize';
+import fs from 'fs';
+import path from 'path';
+
+let database = null;
+
+const loadModels = (sequelize) => {
+    const dir = path.join(__dirname,'../models');
+    let models = [];
+    fs.readdirSync(dir).forEach(file => {
+      const modelDir = path.join(dir,file),
+      model = sequelize.import(modelDir);
+      models[model.name] = model;
+    });
+    return models;
+};
+
+export default (app) => {
+  if(!database) {
+    const config = app.config,
+    sequelize = new Sequelize(
+      config.database,
+      config.username,
+      config.password,
+      config.params
+    );
+    database = {
+      sequelize,
+      Sequelize,
+      models: {}
+    };
+
+    database.models = loadModels(sequelize);
+
+    sequelize.sync().done(() => {
+      return database;
+    });
+  }
+  return database;
+};
+````
+
+vamos agora alterar o <b>app.js</b> ( express ), vamos adicionar a seguintes linhas:
+````js
+import express from 'express';
+import config from './config/config';
+import datasource from './config/datasource';
+
+const app = express();
+app.config = config;
+app.datasource = datasource(app);
+
+// seta uma porta deixando a configuração global que será usadas em index.js
+
+app.set('port',7000);
+// importa o Books (model)
+const Books = app.datasource.models.Books;
+
+app.route('/books')
+  .get((req,res) => {
+    // faz uma busca por todos os books
+    Books.findAll({})
+      .then(result => {res.json(result)})
+      .catch(err => {res.status(412)})
+  });
+
+export default app;
+````
+
+<b>index.js</b>
+````js
+import app from './app';
+
+app.listen(app.get('path'), () => {
+  console.log(`app is running on port ${app.get('port')}`);
+});
+````
+
+podemos agora rodar o <b>npm run test-integration</b> e podemos ver o teste quebrando, vamos agora configurar o teste.
+<b>/test/integration/app.js</b>
+````js
+describe('Routes books', () => {
+  // busca o model de Books
+  const Books = app.datasource.models.Books,
+  defaultBook = {
+    id:1,
+    name:'Default Book'
+  };
+  // deixa explicito para o framework de testes que antes de rodar os testes ele deve
+  // realizar os passos abaixo.
+  beforeEach(done => {
+    Books
+      // como o model é criado pelo sequelize o destroy faz parte do sequelize (vide documentação)
+      .destroy({where:{}})
+      .then(() => Books.create(defaultBook))
+      .then(() => {
+        done();
+      });
+  });
+
+  describe('Route GET /books', () => {
+    it('should return a list of books', done => {
+      request
+        .get('/books')
+        .end((err, res) => {
+
+          expect(res.body[0].name).to.be.equal(defaultBook.name);
+          expect(res.body[0].id).to.be.equal(defaultBook.id);
+
+          done(err);
+        });
+    });
+  });
+
+});
+````
 
 ## Aula 05
