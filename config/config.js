@@ -6,7 +6,7 @@ export default {
     dialect: 'sqlite',
     storage: 'books.sqlite',
     define: {
-      underscored: true
-    }
-  }
-}
+      underscored: true,
+    },
+  },
+};
