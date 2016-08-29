@@ -6,7 +6,7 @@ let database = null;
 
 export default (app) => {
   if(!database) {
-    const config = app.config;
+    const config = app.config,
     sequelize = new Sequelize(
       config.database,
       config.username,
@@ -17,7 +17,7 @@ export default (app) => {
       sequelize,
       Sequelize,
       models: {}
-    }
+    };
     
     sequelize.sync().done() => {
       return database;

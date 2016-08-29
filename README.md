@@ -51,7 +51,7 @@ primeiro vamos instalar as dependências com o comando:
 npm install mocha chai supertest --save-dev
 ````
 
-vamos agora criar os diretórios <b>/test/integration</b>, que é onde vão ficar os testes de integração nesse mesmodiretório vamos criar os arquivos 
+vamos agora criar os diretórios <b>/test/integration</b>, que é onde vão ficar os testes de integração nesse mesmodiretório vamos criar os arquivos
 
 <b>app.js</b>
 ````js
@@ -67,10 +67,10 @@ describe('Routes books', () => {
       request
         .get('/books')
         .end((err, res) => {
-                
+
           expect(res.body[0].name).to.be.equal(defaultBook.name);
           expect(res.body[0].id).to.be.equal(defaultBook.id);
-          
+
           done(err);
         });
     });
@@ -110,7 +110,7 @@ app.route('/books')
   .get((req,res) => {
     res.json([{
       id:1,
-      name:'Default Book' 
+      name:'Default Book'
     }]);
   });
 
@@ -120,6 +120,62 @@ e com isso já podemos rodar os teste com o comando:<b>npm run test-integration<
 
 ## Aula 03 (sequelize e sqlite)
 
+Na Aula 02 vimos como funcionam basicamente os testes, primeiro escrevemos o teste e rodamos para ver ele "quebrar" e então fazemos a implementação de uma forma básica para o teste passar.
+Vamos começar instalando duas dependências para essa aula:
+````
+npm install sequelize sqlite3 --save
+````
+O sequelize é um ORM para banco relacional e o sqlite é um banco relacional bem simples, feito isso criamos o diretório <b> config </b> e dentro criamos os arquivos:
+<b>config.js</b>
+````js
+export default {
+  database: 'books',
+  username: '',
+  password: '',
+  params: {
+    dialect: 'sqlite',
+    storage: 'books.sqlite',
+    define: {
+      underscored: true
+    }
+  }
+}
+````
+
+<b>datasource.js</b>
+````js
+import Sequelize from 'sequelize';
+import fs from 'fs';
+import path from 'path';
+
+let database = null;
+
+export default (app) => {
+  if(!database) {
+    const config = app.config,
+    sequelize = new Sequelize(
+      config.database,
+      config.username,
+      config.password,
+      config.params
+    );
+    database = {
+      sequelize,
+      Sequelize,
+      models: {}
+    };
+
+    sequelize.sync().done() => {
+      return database;
+    };
+  }
+  return database;
+};
+````
+
+e agora criamos o diretório <b>models</b> e nele criamos o arquivo <b>Books.js</b>.
+
+Aula finalizada, o que temos de interessante nessa aula são os arquivos config.js e datasource.js que vão nos auxiliar com o banco de dados para que nossa api retorne dados vindo de um banco na próxima aula vamos configurar o modelo.
 
 ## Aula 04
 
