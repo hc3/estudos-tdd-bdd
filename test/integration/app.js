@@ -19,6 +19,7 @@ describe('Routes books', () => {
 
   describe('Route GET /books', () => {
     it('should return a list of books', done => {
+            console.log(texto);      
       request
         .get('/books')
         .end((err, res) => {
