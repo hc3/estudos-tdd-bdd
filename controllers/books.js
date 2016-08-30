@@ -27,8 +27,7 @@ class BooksController {
   }
 
   create(data) {
-          console.log("data:",data);
-          return this.Books.create(data)
+    return this.Books.create(data)
       .then(result => defaultResponse(result, 201))
       .catch(() => errorResponse(error.message, 422));
   }
