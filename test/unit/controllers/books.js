@@ -35,7 +35,7 @@ describe('Controllers: Books', () => {
         updated_at: '2016-08-06T23:55:36.692Z',
       }];
 
-        td.when(Books.findOne({where: {id:1}})).thenResolve(expectedResponse);
+      td.when(Books.findOne({where: {id:1}})).thenResolve(expectedResponse);
 
       const booksController = new BooksController(Books);
       return booksController.getById({id:1})
@@ -65,7 +65,10 @@ describe('Controllers: Books', () => {
 
       const booksController = new BooksController(Books);
       return booksController.create(requestBody)
-        .then(response => expect(response.data).to.be.eql(expectedResponse));
+        .then(response => {
+          expect(response.statusCode).to.be.eql(201);
+          expect(response.data).to.be.eql(expectedResponse);
+        });
     });
   });
 
@@ -77,6 +80,7 @@ describe('Controllers: Books', () => {
 
 
       const requestBody = {
+        id:1,
         name:'Test Book Updated'
       }
 
@@ -91,7 +95,9 @@ describe('Controllers: Books', () => {
 
       const booksController = new BooksController(Books);
       return booksController.update(requestBody,{id: 1})
-        .then(response => expect(response.data).to.be.eql(expectedResponse));
+        .then(response => {
+          expect(response.data).to.be.eql(expectedResponse);
+        });
     });
   });
 
@@ -103,11 +109,11 @@ describe('Controllers: Books', () => {
 
       const expectedResponse = {};
 
-      td.when(Books.destroy({where: {id:1}})).thenResolve(expectedResponse);
+      td.when(Books.destroy({where: {id: 1}})).thenResolve(expectedResponse);
 
       const booksController = new BooksController(Books);
-      return booksController.delete({id:1})
-        .then(response => expect(response.data).to.be.eql(expectedResponse));
+      return booksController.delete({id: 1})
+        .then(response => expect(response.statusCode).to.be.eql(204));
     });
   });
 
