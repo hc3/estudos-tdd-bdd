@@ -4,9 +4,8 @@
   "description": "um sistema para treinar tdd e bdd com gulp e outras ferramentas automatizadas",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "npm run test-unit && npm run test-integration && npm run test-contract",
     "start": "NODE_ENV=prod babel-node index.js",
-    "test":"npm run lint && npm run test-unit npm run test-integration && npm run test-contract",
     "test-integration": "NODE_ENV=test mocha --opts test/integration/mocha.opts test/integration/*.js",
     "test-unit": "NODE_ENV=test mocha --opts test/unit/mocha.opts test/unit/**/*.js",
     "test-contract": "NODE_ENV=test mocha --opts test/contract/mocha.opts test/contract/contracts/*.js",

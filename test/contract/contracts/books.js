@@ -19,18 +19,17 @@ describe('Routes books', () => {
 
   describe('Route GET /books', () => {
     it('should return a list of books', done => {
-
       const booksList = Joi.array().items(Joi.object().keys({
-        id:Joi.number(),
-        name:Joi.string(),
-        created_at:Joi.date().iso(),
-        updated_at:Joi.date().iso()
+        id: Joi.number(),
+        name: Joi.string(),
+        created_at: Joi.date().iso(),
+        updated_at: Joi.date().iso(),
       }));
 
       request
         .get('/books')
         .end((err, res) => {
-          joiAssert(res.body,booksList);
+          joiAssert(res.body, booksList);
           done(err);
         });
     });
@@ -39,16 +38,16 @@ describe('Routes books', () => {
   describe('Route GET /books/{id}', () => {
     it('should return a books', done => {
       const books = Joi.object().keys({
-        id:Joi.number(),
-        name:Joi.string(),
-        created_at:Joi.date().iso(),
-        updated_at:Joi.date().iso()
+        id: Joi.number(),
+        name: Joi.string(),
+        created_at: Joi.date().iso(),
+        updated_at: Joi.date().iso(),
       });
 
       request
         .get('/books/1')
         .end((err, res) => {
-          joiAssert(res.body,books);
+          joiAssert(res.body, books);
 
           done(err);
         });
@@ -62,16 +61,16 @@ describe('Routes books', () => {
         name: 'newBook',
       };
       const book = Joi.object().keys({
-        id:Joi.number(),
-        name:Joi.string(),
-        created_at:Joi.date().iso(),
-        updated_at:Joi.date().iso()
+        id: Joi.number(),
+        name: Joi.string(),
+        created_at: Joi.date().iso(),
+        updated_at: Joi.date().iso(),
       });
       request
         .post('/books')
         .send(newBook)
         .end((err, res) => {
-          joiAssert(res.body,book);
+          joiAssert(res.body, book);
           done(err);
         });
     });
@@ -89,7 +88,7 @@ describe('Routes books', () => {
         .put('/books/1')
         .send(updatedBook)
         .end((err, res) => {
-          joiAssert(res.body,updatedCount);
+          joiAssert(res.body, updatedCount);
 
           done(err);
         });
