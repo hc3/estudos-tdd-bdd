@@ -1,32 +1,42 @@
 import BooksController from '../controllers/books';
 
-export default (app,Books) => {
+export default (app) => {
+  const booksController = new BooksController(app.datasource.models.Books);
 app.route('/books')
   .get((req, res) => {
-    Books.findAll({})
-      .then(result => { res.json(result); })
-      .catch(() => { res.status(412); });
+    booksController.getAll()
+      .then(response => {
+        res.status(response.statusCode);
+        res.json(response.data);
+      });
   })
   .post((req, res) => {
-    Books.create(req.body)
-      .then(result => res.json(result))
-      .catch(() => res.status(412));
+    booksController.create(req.body)
+      .then(response => {
+        res.status(response.statusCode);
+        res.json(response.data);
+      });
   });
 
 app.route('/books/:id')
   .get((req, res) => {
-    Books.findOne({ where: req.params })
-      .then(result => { res.json(result); })
-      .catch(() => { res.status(412); });
+    booksController.getById(req.params)
+      .then(response => {
+        res.status(response.statusCode);
+        res.json(response.data);
+      });
   })
   .put((req, res) => {
-    Books.update(req.body, { where: req.params })
-      .then(result => { res.json(result); })
-      .catch(() => { res.status(412); });
+    booksController.update(req.body,req.params)
+      .then(response => {
+        res.status(response.statusCode);
+        res.json(response.data);
+      });
   })
   .delete((req, res) => {
-    Books.destroy({ where: req.params })
-      .then(() => { res.sendStatus(204); })
-      .catch(() => { res.status(412); });
+    booksController.delete(req.params)
+      .then(response => {
+        res.sendStatus(response.statusCode);
+      });
   });
 }
