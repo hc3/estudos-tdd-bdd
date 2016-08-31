@@ -4,6 +4,7 @@ describe('Routes books', () => {
   const defaultBook = {
     id: 1,
     name: 'Default Book',
+    description: 'Default description',
   };
   // deixa explicito para o framework de testes que antes de rodar os testes ele deve
   // realizar os passos abaixo.
@@ -48,6 +49,7 @@ describe('Routes books', () => {
       const newBook = {
         id: 2,
         name: 'newBook',
+        description: 'new description'
       };
       request
         .post('/books')
@@ -55,7 +57,7 @@ describe('Routes books', () => {
         .end((err, res) => {
           expect(res.body.id).to.be.eql(newBook.id);
           expect(res.body.name).to.be.eql(newBook.name);
-
+          expect(res.body.description).to.be.eql(newBook.description);
           done(err);
         });
     });

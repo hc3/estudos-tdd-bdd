@@ -4,6 +4,7 @@ describe('Routes books', () => {
   const defaultBook = {
     id: 1,
     name: 'Default Book',
+    description: 'Default description',
   };
   // deixa explicito para o framework de testes que antes de rodar os testes ele deve
   // realizar os passos abaixo.
@@ -22,6 +23,7 @@ describe('Routes books', () => {
       const booksList = Joi.array().items(Joi.object().keys({
         id: Joi.number(),
         name: Joi.string(),
+        description: Joi.string(),
         created_at: Joi.date().iso(),
         updated_at: Joi.date().iso(),
       }));
@@ -40,6 +42,7 @@ describe('Routes books', () => {
       const books = Joi.object().keys({
         id: Joi.number(),
         name: Joi.string(),
+        description: Joi.string(),
         created_at: Joi.date().iso(),
         updated_at: Joi.date().iso(),
       });
@@ -59,10 +62,12 @@ describe('Routes books', () => {
       const newBook = {
         id: 2,
         name: 'newBook',
+        description: 'new description',
       };
       const book = Joi.object().keys({
         id: Joi.number(),
         name: Joi.string(),
+        description: Joi.string(),
         created_at: Joi.date().iso(),
         updated_at: Joi.date().iso(),
       });
@@ -81,6 +86,7 @@ describe('Routes books', () => {
       const updatedBook = {
         id: 1,
         name: 'Updated Book',
+        description: 'Updated description',
       };
       const updatedCount = Joi.array().items(1);
 

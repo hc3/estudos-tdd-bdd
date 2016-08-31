@@ -12,6 +12,13 @@ export default (sequelize, DataType) => {
         notEmpty: true,
       },
     },
+    description: {
+      type: DataType.STRING,
+      allowNull: false,
+      validade: {
+        notEmpty: true,
+      },
+    },
   });
   return Books;
 };
